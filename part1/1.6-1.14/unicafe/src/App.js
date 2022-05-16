@@ -4,14 +4,15 @@ const Button = ({ text, clickHandler }) => <button onClick={clickHandler}>{text}
 
 const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad;
-  return <>
+  return <> {total ? <>
     <h2>statistics</h2>
     <p>good {good}</p>
     <p>neutral {neutral}</p>
     <p>bad {bad}</p>
     <p>all {total}</p>
-    <p>average {total ? (good - bad) / total : 0}</p>
-    <p>positive {total ? good / total * 100 : 0}%</p>
+    <p>average {(good - bad) / total}</p>
+    <p>positive {good / total * 100}%</p>
+  </> : <p>No feedback given</p>}
   </>
 }
 
