@@ -15,7 +15,7 @@ const Content = ({ parts }) => <>
 </>
 
 const Total = ({ parts }) => <>
-  <p>Number of exercises {parts.map(_ => _.exercises).reduce((a, b) => a + b, 0)}</p>
+  <b>Number of exercises {parts.map(_ => _.exercises).reduce((a, b) => a + b, 0)}</b>
 </>
 
 const Course = ({ course }) =>
