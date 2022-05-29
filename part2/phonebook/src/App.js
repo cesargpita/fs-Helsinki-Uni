@@ -13,7 +13,7 @@ const App = () => {
   useEffect(() => {
     axios.get('http://localhost:3001/persons')
       .then(persons => setPersons(persons.data))
-  })
+  }, [])
 
   const handleNameChange = (event) => setNewName(event.target.value)
 
