@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Detail from './components/Detail';
+import ListElement from './components/ListElement';
 
 const App = () => {
 
@@ -32,7 +33,7 @@ const App = () => {
             (results.length === 0) ?
               <p>No results found for that text</p> :
               (results.length === 1) ?
-                <Detail country={results[0]} /> : <ul>{results.map(result => <li key={result.name.common}>{result.name.common}</li>)}</ul> : <></>
+                <Detail country={results[0]} /> : <>{results.map(country => <ListElement key={country.name.common} country={country} />)}</> : <></>
       }
     </div>
   )

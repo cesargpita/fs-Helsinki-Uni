@@ -5,7 +5,7 @@ const Detail = ({ country }) => {
   return (
     <div>
       <h1>{country.name.common}</h1>
-      <p>capital {country.capital[0]}</p>
+      <p>{country.capital && `capital ${country.capital[0]}`}</p>
       <p>area {country.area}</p>
       <h3>Languages</h3>
       <ul>
