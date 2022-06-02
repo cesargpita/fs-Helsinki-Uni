@@ -22,7 +22,7 @@ const App = () => {
   const handleSearch = (event) => {
     setName(event.target.value);
   }
-  console.log(results.length)
+
   return (
     <div>
       Find countries: <input value={name} onChange={handleSearch} />
