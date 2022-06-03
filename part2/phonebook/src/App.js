@@ -22,6 +22,8 @@ const App = () => {
 
   const handleFilterChange = (event) => setFilterName(event.target.value)
 
+  const handleDelete = (id) => personsService.deleteName(id).then(() => setPersons([...persons.filter(_ => _.id !== id)]))
+
 
   const addName = (event) => {
     event.preventDefault();
@@ -29,7 +31,6 @@ const App = () => {
     if (existingPerson) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      //setPersons(persons.concat({ name: newName, number: newNumber }))
       personsService.addName({ name: newName, number: newNumber }).then(updated => setPersons(persons.concat(updated)))
       setNewName('');
       setNewNumber('');
@@ -44,7 +45,7 @@ const App = () => {
       <PersonForm addName={addName} newName={newName} handleNumberChange={handleNumberChange}
         handleNameChange={handleNameChange} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterName={filterName} />
+      <Persons persons={persons} filterName={filterName} handleDelete={handleDelete} />
     </div>
   )
 }
