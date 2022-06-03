@@ -24,16 +24,27 @@ const App = () => {
 
   const handleDelete = (id) => personsService.deleteName(id).then(() => setPersons([...persons.filter(_ => _.id !== id)]))
 
+  const resetFields = () => {
+    setNewName('');
+    setNewNumber('');
+  }
+
 
   const addName = (event) => {
     event.preventDefault();
     const existingPerson = persons.find(person => person.name === newName)
+    const newVal = { name: newName, number: newNumber };
     if (existingPerson) {
-      alert(`${newName} is already added to phonebook`)
+      window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`) &&
+        personsService.updateName(existingPerson.id, newVal).then(response => {
+          setPersons(persons.map(p => p.id !== existingPerson.id ? p : response));
+          resetFields();
+        })
     } else {
-      personsService.addName({ name: newName, number: newNumber }).then(updated => setPersons(persons.concat(updated)))
-      setNewName('');
-      setNewNumber('');
+      personsService.addName(newVal).then(updated => {
+        setPersons(persons.concat(updated));
+        resetFields();
+      });
     }
   }
 
