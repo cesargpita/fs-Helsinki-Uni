@@ -9,4 +9,6 @@ const addName = (persons) => axios.post(baseUrl, persons).then(data => data.data
 const deleteName = (id) => axios.delete(`${baseUrl}/${id}`)
 const updateName = (id, newVal) => axios.put(`${baseUrl}/${id}`, newVal).then(data => data.data)
 
-export default { getAll, addName, deleteName, updateName }
+const personsService = { getAll, addName, deleteName, updateName }
+
+export default personsService
