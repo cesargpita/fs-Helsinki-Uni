@@ -12,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filterName, setFilterName] = useState('');
   const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(() => {
     personsService.getAll()
@@ -41,17 +42,21 @@ const App = () => {
         personsService.updateName(existingPerson.id, newVal).then(response => {
           setPersons(persons.map(p => p.id !== existingPerson.id ? p : response));
           resetFields();
+        }).catch(error => {
+          showMessage(`Informaction of '${existingPerson.name}' has already been removed from server`, 'error')
+          setPersons(persons.filter(n => n.id !== existingPerson.id))
         })
     } else {
       personsService.addName(newVal).then(updated => {
         setPersons(persons.concat(updated));
-        showMessage(`Added ${updated.name}`, 3000);
+        showMessage(`Added ${updated.name}`, 'success', 3000);
         resetFields();
       });
     }
   }
 
-  const showMessage = (message, time = 5000) => {
+  const showMessage = (message, type, time = 5000) => {
+    setMessageType(type);
     setMessage(
       message
     )
@@ -63,7 +68,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} type={messageType} />
       <Filter filterName={filterName} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm addName={addName} newName={newName} handleNumberChange={handleNumberChange}
