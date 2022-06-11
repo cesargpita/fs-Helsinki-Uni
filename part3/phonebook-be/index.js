@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let persons = [
   {
     "id": 1,
@@ -23,6 +25,13 @@ let persons = [
     "number": "39-23-6423122"
   }
 ]
+
+const generateId = () => {
+  const maxId = persons.length > 0
+    ? Math.max(...persons.map(n => n.id))
+    : 0
+  return maxId + 1
+}
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -53,6 +62,21 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(_ => _.id !== id)
 
   response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  console.log(request.body)
+  const person = request.body
+
+  if (!person) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  persons = persons.concat({ ...person, id: generateId() })
+
+  response.json(person)
 })
 
 const PORT = 3001
