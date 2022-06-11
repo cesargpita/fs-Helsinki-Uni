@@ -27,10 +27,7 @@ let persons = [
 ]
 
 const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
+  return Math.round(Math.random() * 9999)
 }
 
 app.get('/', (request, response) => {
@@ -65,12 +62,23 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-  console.log(request.body)
   const person = request.body
 
   if (!person) {
     return response.status(400).json({
       error: 'content missing'
+    })
+  }
+
+  if (persons.find(_ => _.name === person.name)) {
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  if (!person.name || !person.number) {
+    return response.status(400).json({
+      error: 'name and number are required fields'
     })
   }
 
