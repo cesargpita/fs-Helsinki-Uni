@@ -19,6 +19,7 @@ const morganConfig = (tokens, req, res) => {
 
 app.use(express.json())
 app.use(morgan(morganConfig))
+app.use(express.static('build'))
 
 let persons = [
   {
