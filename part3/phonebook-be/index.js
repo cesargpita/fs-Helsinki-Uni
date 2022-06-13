@@ -1,10 +1,8 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-
-const app = express()
-
-app.use(cors())
+const Person = require('./models/person')
 
 const morganConfig = (tokens, req, res) => {
   return [
@@ -17,43 +15,20 @@ const morganConfig = (tokens, req, res) => {
   ].join(' ')
 }
 
+const app = express()
 app.use(express.json())
+app.use(cors())
 app.use(morgan(morganConfig))
 app.use(express.static('build'))
 
-let persons = [
-  {
-    "id": 1,
-    "name": "Arto Hellas",
-    "number": "040-123456"
-  },
-  {
-    "id": 2,
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523"
-  },
-  {
-    "id": 3,
-    "name": "Dan Abramov",
-    "number": "12-43-234345"
-  },
-  {
-    "id": 4,
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122"
-  }
-]
-
-const generateId = () => {
-  return Math.round(Math.random() * 9999)
-}
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons =>
+    response.json(persons))
 })
 app.get('/info', (request, response) => {
   response.send(`
@@ -63,13 +38,9 @@ app.get('/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(_ => _.id === id);
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -80,29 +51,30 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
+  const body = request.body
+  console.log(body)
 
-  if (!person) {
+  if (!body) {
     return response.status(400).json({
       error: 'content missing'
     })
   }
 
-  if (persons.find(_ => _.name === person.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
-  if (!person.name || !person.number) {
+  if (!body.name || !body.number) {
     return response.status(400).json({
       error: 'name and number are required fields'
     })
   }
 
-  persons = persons.concat({ ...person, id: generateId() })
-
-  response.json(person)
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
+  person.save()
+    .then((savedPerson) => {
+      console.log('person saved!')
+      response.json(savedPerson)
+    })
 })
 
 const PORT = process.env.PORT || 3001
