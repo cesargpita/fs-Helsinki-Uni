@@ -47,11 +47,15 @@ const App = () => {
           setPersons(persons.filter(n => n.id !== existingPerson.id))
         })
     } else {
-      personsService.addName(newVal).then(updated => {
-        setPersons(persons.concat(updated));
-        showMessage(`Added ${updated.name}`, 'success', 3000);
-        resetFields();
-      });
+      personsService.addName(newVal)
+        .then(updated => {
+          setPersons(persons.concat(updated));
+          showMessage(`Added ${updated.name}`, 'success', 3000);
+          resetFields();
+        }).catch(error => {
+          console.log('front', error)
+          showMessage(`Person validation failed: ${error.response.data.error}`, 'error')
+        });
     }
   }
 
