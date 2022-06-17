@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios'
 
-const baseUrl = '/api/persons';
+const baseUrl = '/api/persons'
 
-const getAll = () => axios.get(baseUrl);
+const getAll = () => axios.get(baseUrl)
 
-const addName = (persons) => axios.post(baseUrl, persons).then(data => data.data);
+const addName = (persons) => axios.post(baseUrl, persons).then(data => data.data)
 
 const deleteName = (id) => axios.delete(`${baseUrl}/${id}`)
 const updateName = (id, newVal) => axios.put(`${baseUrl}/${id}`, newVal).then(data => data.data)

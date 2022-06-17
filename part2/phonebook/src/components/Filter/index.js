@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const Filter = ({ filterName, handleFilterChange }) => {
   return (
@@ -8,6 +9,11 @@ const Filter = ({ filterName, handleFilterChange }) => {
         onChange={handleFilterChange} />
     </div>
   )
+}
+
+Filter.propTypes = {
+  filterName: PropTypes.string,
+  handleFilterChange: PropTypes.any
 }
 
 export default Filter

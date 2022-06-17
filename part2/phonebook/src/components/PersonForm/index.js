@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const PersonForm = ({ addName, newName, handleNameChange, newNumber, handleNumberChange }) => {
   return (
@@ -18,6 +19,14 @@ const PersonForm = ({ addName, newName, handleNameChange, newNumber, handleNumbe
       </div>
     </form>
   )
+}
+
+PersonForm.propTypes = {
+  addName: PropTypes.any,
+  newName: PropTypes.string,
+  handleNameChange: PropTypes.any,
+  newNumber: PropTypes.string,
+  handleNumberChange: PropTypes.any
 }
 
 export default PersonForm
