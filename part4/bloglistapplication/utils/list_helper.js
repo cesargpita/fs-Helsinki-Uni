@@ -22,4 +22,17 @@ const mostBlogs = (blogs) => {
   return results.reduce((a, b) => a?.blogs > b?.blogs ? a : b, null)
 }
 
-module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs }
+const mostLikes = (blogs) => {
+  const results = [];
+  blogs.map(_ => ({ author: _.author, likes: _.likes })).forEach(_ => {
+    const index = results.findIndex(res => res.author === _.author)
+    if (index !== -1) {
+      results[index].likes = results[index].likes + _.likes;
+    } else {
+      results.push(_);
+    }
+  })
+  return results.reduce((a, b) => a?.likes > b?.likes ? a : b, null)
+}
+
+module.exports = { dummy, totalLikes, favouriteBlog, mostBlogs, mostLikes }
