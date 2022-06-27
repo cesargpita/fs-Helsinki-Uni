@@ -81,6 +81,32 @@ test('a valid blog can be added', async () => {
   )
 })
 
+test('a blog without likes property will default to 0', async () => {
+  const newBlog = {
+    title: 'no likes in this title',
+    author: 'Jest',
+    url: 'auto_gen_url',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const contents = response.body.map(r => {
+    delete r.id
+    return r
+  })
+
+  expect(response.body).toHaveLength(initialBlogs.length + 1)
+  expect(contents).toContainEqual(
+    { ...newBlog, likes: 0 }
+  )
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
