@@ -107,6 +107,93 @@ test('a blog without likes property will default to 0', async () => {
   )
 })
 
+test('a blog without url and title will not be saved', async () => {
+  const newBlog = {
+    author: 'Jest',
+    likes: 20
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /text\/html/)
+})
+
+describe('get a specific blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogs = await api.get('/api/blogs');
+
+    await api
+      .get(`/api/blogs/${blogs.body[0].id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('fails with status code 404 if id is not valid', async () => {
+    await api
+      .get('/123123123')
+      .expect(404)
+  })
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogs = await api.get('/api/blogs');
+
+    const blogToDelete = blogs.body[0];
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await api.get('/api/blogs')
+
+    expect(blogsAtEnd.body).toHaveLength(
+      initialBlogs.length - 1
+    )
+
+    expect(blogsAtEnd.body).not.toContain(blogToDelete.content)
+  })
+
+  test('fails with status code 500 if id is not valid', async () => {
+
+    await api
+      .delete('/api/blogs/123123123')
+      .expect(500)
+  })
+})
+
+describe('update of a blog', () => {
+  test('succeeds with status code 200 if id & params are valid', async () => {
+    const blogs = await api.get('/api/blogs');
+
+    const blogToUpdate = blogs.body[0];
+
+    const blogAtEnd = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send({ ...blogToUpdate, likes: 20 })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(blogAtEnd.body.likes).toEqual(20)
+    expect(blogAtEnd.body.title).toEqual(blogToUpdate.title)
+    expect(blogAtEnd.body.author).toEqual(blogToUpdate.author)
+    expect(blogAtEnd.body.url).toEqual(blogToUpdate.url)
+  })
+
+  test('fails with status code 500 if id is not valid', async () => {
+
+    const blogs = await api.get('/api/blogs');
+
+    const blogToUpdate = blogs.body[0];
+
+    await api
+      .put('/api/blogs/123123123', { ...blogToUpdate, likes: 20 })
+      .expect(500)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
