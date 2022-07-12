@@ -1,4 +1,6 @@
+const config = require('../utils/config')
 const mongoose = require('mongoose')
+mongoose.connect(config.MONGODB_URI)
 
 const userSchema = new mongoose.Schema({
   username: String,
