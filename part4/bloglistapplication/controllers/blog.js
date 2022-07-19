@@ -36,22 +36,24 @@ blogRouter.get('/:id', async (request, response, next) => {
   }
 })
 
-blogRouter.put('/:id', (request, response, next) => {
+blogRouter.put('/:id', async (request, response, next) => {
   const body = request.body
 
-  Blog.findByIdAndUpdate(request.params.id, body, { new: true, runValidators: true, context: 'query' })
-    .then(updatedBlog => {
-      response.json(updatedBlog)
-    })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, body, { new: true, runValidators: true, context: 'query' })
     .catch(error => next(error))
+  response.json(updatedBlog)
 })
 
-blogRouter.delete('/:id', (request, response, next) => {
-  Blog.findByIdAndRemove(request.params.id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error))
+blogRouter.delete('/:id', async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (blog.user.toString() === decodedToken.id.toString()) {
+    await Blog.findByIdAndRemove(request.params.id)
+      .catch(error => next(error))
+    response.status(204).end()
+  } else {
+    response.status(400).send('only the author can delete the blog!');
+  }
 })
 
 
