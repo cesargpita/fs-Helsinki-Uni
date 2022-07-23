@@ -5,6 +5,11 @@ const usersInDb = async () => {
   return users.map(u => u.toJSON())
 }
 
+const getToken = async () => {
+  const usersAtStart = await helper.usersInDb()
+
+}
+
 module.exports = {
   usersInDb
 }

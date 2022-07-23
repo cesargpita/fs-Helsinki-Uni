@@ -3,26 +3,41 @@ const supertest = require('supertest')
 const app = require('../app')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
-
-const api = supertest(app)
 const Blog = require('../models/blog')
-
 const helper = require('./test_helper')
 
-const initialBlogs = [
+const api = supertest(app)
+
+
+let initialBlogs = [
   {
     title: 'Test Blog 123',
-    author: 'Uncle',
+    author: 'root',
     url: 'mock_url',
     likes: 12
   },
   {
     title: 'Browser can execute only Javascript',
-    author: 'Aunt',
+    author: 'root',
     url: 'mock_url_2',
     likes: 30
   },
 ]
+let token;
+let testUser;
+
+beforeAll(async () => {
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', name: 'root', passwordHash })
+
+  await user.save()
+
+  const login = await api.post('/api/login').send({ username: 'root', password: 'sekret' })
+  token = `Bearer ${login.body.token}`;
+
+  testUser = await User.findOne({ username: 'root' })
+  initialBlogs = initialBlogs.map(blog => ({ ...blog, user: testUser.id.toString() }))
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -54,21 +69,20 @@ test('a specific blog is within the returned blogs', async () => {
     return _
   })
   expect(contents).toContainEqual(
-    initialBlogs[1]
+    { ...initialBlogs[1], user: { "id": testUser.id, "username": "root" } }
   )
 })
 
 test('a valid blog can be added', async () => {
   const newBlog = {
     title: 'async/await simplifies making async calls',
-    author: 'Jest',
     url: 'auto_gen_url',
     likes: 1
   }
-
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set({ 'Content-Type': 'application/json', Authorization: token })
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -88,12 +102,12 @@ test('a valid blog can be added', async () => {
 test('a blog without likes property will default to 0', async () => {
   const newBlog = {
     title: 'no likes in this title',
-    author: 'Jest',
     url: 'auto_gen_url',
   }
 
   await api
     .post('/api/blogs')
+    .set({ 'Content-Type': 'application/json', Accept: '*/*', Authorization: token })
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -120,6 +134,10 @@ test('a blog without url and title will not be saved', async () => {
   await api
     .post('/api/blogs')
     .send(newBlog)
+    .set({
+      'Content-Type': 'application/json',
+      Authorization: token
+    })
     .expect(400)
     .expect('Content-Type', /text\/html/)
 })
@@ -136,7 +154,7 @@ describe('get a specific blog', () => {
 
   test('fails with status code 404 if id is not valid', async () => {
     await api
-      .get('/123123123')
+      .get(`/api/blogs/${mongoose.Types.ObjectId(1321321)}`)
       .expect(404)
   })
 })
@@ -148,7 +166,8 @@ describe('deletion of a blog', () => {
     const blogToDelete = blogs.body[0];
 
     await api
-      .delete(`/api/blogs/${blogToDelete.id}`)
+      .delete(`/api/blogs/${blogToDelete.id.toString()}`)
+      .set({ 'Content-Type': 'application/json', Accept: '*/*', Authorization: token })
       .expect(204)
 
     const blogsAtEnd = await api.get('/api/blogs')
@@ -163,7 +182,8 @@ describe('deletion of a blog', () => {
   test('fails with status code 500 if id is not valid', async () => {
 
     await api
-      .delete('/api/blogs/123123123')
+      .delete(`/api/blogs/${mongoose.Types.ObjectId(123123123)}`)
+      .set({ Authorization: token })
       .expect(500)
   })
 })
@@ -175,8 +195,9 @@ describe('update of a blog', () => {
     const blogToUpdate = blogs.body[0];
 
     const blogAtEnd = await api
-      .put(`/api/blogs/${blogToUpdate.id}`)
-      .send({ ...blogToUpdate, likes: 20 })
+      .put(`/api/blogs/${blogToUpdate.id.toString()}`)
+      .send({ likes: 20 })
+      .set({ 'Content-Type': 'application/json', Accept: '*/*', Authorization: token })
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
@@ -193,7 +214,8 @@ describe('update of a blog', () => {
     const blogToUpdate = blogs.body[0];
 
     await api
-      .put('/api/blogs/123123123', { ...blogToUpdate, likes: 20 })
+      .put('/api/blogs/9999999999', { ...blogToUpdate, likes: 20 })
+      .set({ 'Content-Type': 'application/json', Accept: '*/*', Authorization: token })
       .expect(500)
   })
 })
