@@ -15,6 +15,10 @@ const Login = ({ setUser }) => {
         username, password,
       })
       setUser(user)
+      console.log(user)
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
       setUsername('')
       setPassword('')
     } catch (exception) {
