@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Login from './components/login'
+import AddBlog from './components/AddBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -30,6 +31,7 @@ const App = () => {
 
   return (
     <div>
+      <AddBlog blogs={blogs} setBlogs={setBlogs} />
       <h2>blogs</h2>
       <div>{user.name} logged in <button onClick={() => logOut()}>logout</button></div>
       {blogs.map(blog =>
