@@ -12,13 +12,12 @@ const getAll = async () => {
   return response.data
 }
 
-const create = async (blog) => {
+const create = (blog) => {
   setToken(JSON.parse(window.localStorage.getItem('loggedBlogappUser')).token)
   const config = {
     headers: { Authorization: token },
   }
-  const response = await axios.post(baseUrl, blog, config)
-  return response.data
+  return axios.post(baseUrl, blog, config)
 }
 
 export default { getAll, create, setToken }
