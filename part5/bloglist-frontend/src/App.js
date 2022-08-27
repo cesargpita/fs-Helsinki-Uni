@@ -29,7 +29,6 @@ const App = () => {
   }
 
   const showMessage = (message, type, time = 5000) => {
-    console.log('showMessage')
     setMessageType(type)
     setMessage(
       message

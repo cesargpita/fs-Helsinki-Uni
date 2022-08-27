@@ -20,4 +20,12 @@ const create = (blog) => {
   return axios.post(baseUrl, blog, config)
 }
 
-export default { getAll, create, setToken }
+const update = (blog) => {
+  setToken(JSON.parse(window.localStorage.getItem('loggedBlogappUser')).token)
+  const config = {
+    headers: { Authorization: token },
+  }
+  return axios.put(`${baseUrl}/${blog.id}`, blog, config)
+}
+
+export default { getAll, create, setToken, update }
