@@ -1,6 +1,6 @@
-import { useState } from "react"
-import loginService from "../services/login"
-import blogService from "../services/blogs"
+import { useState } from 'react'
+import loginService from '../services/login'
+import blogService from '../services/blogs'
 
 const Login = ({ setUser, showMessage }) => {
 
@@ -50,4 +50,4 @@ const Login = ({ setUser, showMessage }) => {
   </form>)
 }
 
-export default Login;
+export default Login

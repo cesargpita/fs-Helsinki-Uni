@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs';
+import blogService from '../services/blogs'
 
 const AddBlog = ({ setBlogs, blogs, showMessage }) => {
 
@@ -10,7 +10,7 @@ const AddBlog = ({ setBlogs, blogs, showMessage }) => {
   const addBlog = async (event) => {
     event.preventDefault()
     const blogObject = { title, url }
-    const newBlog = await blogService.create(blogObject).catch(err => showMessage(`Error adding blog: ${err}`, 'error'));
+    const newBlog = await blogService.create(blogObject).catch(err => showMessage(`Error adding blog: ${err}`, 'error'))
     setBlogs(blogs.concat(newBlog.data))
     setTitle('')
     setUrl('')

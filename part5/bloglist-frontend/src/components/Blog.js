@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState } from 'react'
 import blogService from '../services/blogs'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog }) => {
 
@@ -14,13 +15,13 @@ const Blog = ({ blog }) => {
   }
 
   const likeBlog = async () => {
-    const updated = await blogService.update({ ...blogData, likes: blogData.likes + 1 });
+    const updated = await blogService.update({ ...blogData, likes: blogData.likes + 1 })
     setBlogData(updated.data)
   }
 
   const deleteBlog = async () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogService.remove(blog);
+      await blogService.remove(blog)
     }
   }
 
@@ -36,6 +37,13 @@ const Blog = ({ blog }) => {
       </div>}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: {
+    url: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  }
 }
 
 export default Blog
