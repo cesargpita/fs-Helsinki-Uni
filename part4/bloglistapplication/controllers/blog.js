@@ -4,7 +4,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 blogRouter.get('', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+  const blogs = await Blog.find({}).populate('user', { name: 1 })
   response.json(blogs)
 })
 
@@ -20,7 +20,7 @@ blogRouter.post('', async (request, response) => {
   } else if (!user) {
     response.status(400).send('user not present in database!');
   } else {
-    const blog = new Blog({ title, author: user.name, url, likes: likes ? likes : 0 })
+    const blog = new Blog({ title, author: user.name, url, likes: likes ? likes : 0, user: user.id })
     const result = await blog.save()
     response.status(201).json(result)
   }

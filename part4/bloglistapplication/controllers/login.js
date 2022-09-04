@@ -17,6 +17,7 @@ loginRouter.post('/', async (request, response) => {
     })
   }
 
+  console.log(user)
   const userForToken = {
     username: user.username,
     id: user._id,
@@ -26,7 +27,7 @@ loginRouter.post('/', async (request, response) => {
 
   response
     .status(200)
-    .send({ token, username: user.username, name: user.name })
+    .send({ token, username: user.username, name: user.name, id: user._id })
 })
 
 module.exports = loginRouter

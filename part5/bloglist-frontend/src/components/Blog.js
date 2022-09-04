@@ -3,6 +3,7 @@ import blogService from '../services/blogs'
 
 const Blog = ({ blog }) => {
 
+  const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser')).name
   const [blogData, setBlogData] = useState(blog)
   const blogStyle = {
     paddingTop: 10,
@@ -17,6 +18,12 @@ const Blog = ({ blog }) => {
     setBlogData(updated.data)
   }
 
+  const deleteBlog = async () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogService.remove(blog);
+    }
+  }
+
   const [visibleBlog, setVisibleBlog] = useState(false)
   return (
     <div style={blogStyle}>
@@ -25,6 +32,7 @@ const Blog = ({ blog }) => {
         <div>{blogData.url}</div>
         <div>likes {blogData.likes}<button onClick={likeBlog}>like</button></div>
         <div>{blogData.author}</div>
+        {user === blog.author && <button onClick={deleteBlog}>delete</button>}
       </div>}
     </div>
   )
