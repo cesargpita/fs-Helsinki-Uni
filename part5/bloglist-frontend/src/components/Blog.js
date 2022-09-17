@@ -28,22 +28,24 @@ const Blog = ({ blog }) => {
   const [visibleBlog, setVisibleBlog] = useState(false)
   return (
     <div style={blogStyle}>
-      <div>{blogData.title} <button onClick={() => setVisibleBlog(!visibleBlog)}>{visibleBlog ? 'hide' : 'view'}</button></div>
+      <div className='title'>{blogData.title} <button onClick={() => setVisibleBlog(!visibleBlog)}>{visibleBlog ? 'hide' : 'view'}</button></div>
+      <div className='author'>{blogData.author}</div>
       {visibleBlog && <div>
-        <div>{blogData.url}</div>
-        <div>likes {blogData.likes}<button onClick={likeBlog}>like</button></div>
-        <div>{blogData.author}</div>
+        <div className='url'>{blogData.url}</div>
+        <div className='likes'>likes {blogData.likes}<button onClick={likeBlog}>like</button></div>
         {user === blog.author && <button onClick={deleteBlog}>delete</button>}
       </div>}
     </div>
   )
 }
 
-Blog.propTypes = {
+Blog.propTypes = () => ({
   blog: {
     url: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string,
+    likes: PropTypes.number
   }
-}
+})
 
 export default Blog
