@@ -47,3 +47,18 @@ test('shows likes and url when clicking on the button', async () => {
   const author = container.querySelector('.author')
   expect(author).toHaveTextContent('test author')
 })
+
+test('clicking the button calls event handler once', async () => {
+
+  const mockHandler = jest.fn()
+  render(<Blog blog={blog} likeBlog={mockHandler} />)
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})

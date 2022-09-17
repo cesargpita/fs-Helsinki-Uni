@@ -38,6 +38,10 @@ const App = () => {
     }, time)
   }
 
+  const likeBlog = async (blogData) => {
+    await blogService.update({ ...blogData, likes: blogData.likes + 1 })
+  }
+
 
   if (user === null) {
     return (<>
@@ -48,11 +52,11 @@ const App = () => {
   return (
     <div>
       <Notification message={message} type={messageType} />
-      <AddBlog blogs={blogs} setBlogs={setBlogs} showMessage={showMessage} />
+      <AddBlog blogs={blogs} setBlogs={setBlogs} showMessage={showMessage} createBlog={(blogObject) => blogService.create(blogObject).catch(err => showMessage(`Error adding blog: ${err}`, 'error'))} />
       <h2>blogs</h2>
       <div>{user.name} logged in <button onClick={() => logOut()}>logout</button></div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={() => likeBlog(blog)} />
       )}
     </div>
   )
