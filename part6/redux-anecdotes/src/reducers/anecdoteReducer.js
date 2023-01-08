@@ -25,7 +25,7 @@ const reducer = (state = initialState, action) => {
 
   switch(action.type) {
     case 'VOTE':
-      state = state.map(_ => _.id === action.data.id ? ({..._, votes: _.votes + 1}) : _)
+      state = state.map(_ => _.id === action.data.id ? action.data : _)
       break;
     case 'NEW_ANECDOTE':
       state = [...state, {...action.data, votes: 0, id: getId()}]
@@ -36,4 +36,23 @@ const reducer = (state = initialState, action) => {
   return state.sort((a, b) => b.votes - a.votes)
 }
 
-export default reducer
+const createAnecdote = (content) => {
+  return {
+    type: 'NEW_ANECDOTE',
+    data: {
+      content,
+      votes: 0,
+      id: getId()
+    }
+  }
+}
+
+const voteAnecdote = (content) => {
+  return {
+    type: 'VOTE',
+    data: {...content,
+    votes: content.votes + 1}
+  }
+}
+
+export {reducer, createAnecdote, voteAnecdote}
